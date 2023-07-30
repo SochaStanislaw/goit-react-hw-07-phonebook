@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, removeContact } from '../redux/contactsSlice';
+import { fetchContacts, addContact, deleteContact } from '../redux/operations';
 import { setFilter } from '../redux/filterSlice';
 import { NewContact } from './NewContact';
 import { ListContact } from './ListContact';
@@ -10,6 +10,10 @@ export const App = () => {
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts);
   const filter = useSelector((state) => state.filter);
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const addNewContact = ({ name, number }) => {
     const contactExists = contacts.find((contact) => contact.name === name);
@@ -22,7 +26,7 @@ export const App = () => {
   };
 
   const removeExistingContact = (id) => {
-    dispatch(removeContact(id));
+    dispatch(deleteContact(id));
   };
 
   const changeFilter = e => {
@@ -53,75 +57,3 @@ export const App = () => {
   );
 };
 
-
-// import React from 'react';
-// // hooks:
-// import { useState, useEffect } from 'react';
-// // nanoid:
-// import { nanoid } from 'nanoid';
-// // components:
-// import { NewContact } from './NewContact';
-// import { ListContact } from './ListContact';
-// import { FilterContact } from './FilterContact';
-
-// export const App = () => {
-//   const [contacts, setContacts] = useState(
-//     JSON.parse(window.localStorage.getItem('saved contacts')) || []
-//   );
-//   const [filter, setFilter] = useState('');
-
-//   const addNewContact = ({ name, number }) => {
-//     const contactExists = contacts.find(contact => contact.name === name);
-
-//     if (contactExists) {
-//       alert(`homie "${name}" is already existing on your phone list!`);
-//       return contacts;
-//     } else {
-//       setContacts([
-//         {
-//           id: nanoid(),
-//           name,
-//           number,
-//         },
-//         ...contacts,
-//       ]);
-//     }
-//   };
-
-//   const removeExistingContact = id => {
-//     setContacts(prevState => prevState.filter(contact => contact.id !== id));
-//   };
-
-//   const changeFilter = change => {
-//     setFilter(change.target.value);
-//   };
-
-//   const showFilterContacts = () => {
-//     const makeLowerCase = filter.toLowerCase();
-
-//     return contacts
-//       .map(
-//         contact => contact.name.toLowerCase().includes(makeLowerCase) && contact
-//       )
-//       .filter(contact => contact !== false);
-//   };
-
-//   useEffect(() => {
-//     window.localStorage.setItem('saved contacts', JSON.stringify(contacts));
-//   }, [contacts]);
-
-//   return (
-//     <div>
-//       <p>your best contact's list:</p>
-//       <p>type data and click button to add new contact to your list</p>
-//       <NewContact onSubmit={addNewContact} />
-//       <p>can't find your contact? type name below:</p>
-//       <FilterContact value={filter} onChange={changeFilter} />
-//       <p>contact' list of yours homies:</p>
-//       <ListContact
-//         contacts={showFilterContacts()}
-//         removeContact={removeExistingContact}
-//       />
-//     </div>
-//   );
-// };
